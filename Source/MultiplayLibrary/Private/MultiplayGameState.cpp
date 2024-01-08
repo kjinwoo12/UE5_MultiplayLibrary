@@ -3,6 +3,9 @@
 
 #include "MultiplayGameState.h"
 #include "MultiplayPlayerController.h"
+#include "MultiplayClientEventListener.h"
+
+#include "Kismet/GameplayStatics.h"
 
 void AMultiplayGameState::BeginPlay()
 {
@@ -12,10 +15,10 @@ void AMultiplayGameState::BeginPlay()
         return;
     }
 
-    AMultiplayPlayerController* localPlayerController = GetWorld()->GetFirstPlayerController<AMultiplayPlayerController>();
-    if (!IsValid(localPlayerController))
-        return;
-
-    localPlayerController->OnGameStateBegin(this);
-    
+    TArray<AActor*> foundActors;
+    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayClientEventListener::StaticClass(), foundActors);
+    for(AActor* actor : foundActors)
+    {
+        IMultiplayClientEventListener::Execute_GameStateBegin(actor, this);
+    }
 }

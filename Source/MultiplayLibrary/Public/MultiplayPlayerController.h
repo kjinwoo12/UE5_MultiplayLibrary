@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "MultiplayClientEventListener.h"
 #include "MultiplayPlayerController.generated.h"
 
 /**
@@ -14,9 +15,10 @@ class AMultiplayPlayerState;
 class AMultiplayGameMode;
 
 UCLASS()
-class MULTIPLAYLIBRARY_API AMultiplayPlayerController : public APlayerController
+class MULTIPLAYLIBRARY_API AMultiplayPlayerController : public APlayerController, public IMultiplayClientEventListener
 {
 	GENERATED_BODY()
+
 public:
 	UPROPERTY(BlueprintReadWrite)
 	int PlayerStateNum = 0;
@@ -31,20 +33,18 @@ public:
 
 	void BeginPlay() override;
 
-    void OnGameStateBegin(AMultiplayGameState* MultiplayGameState);
-	UFUNCTION(BlueprintNativeEvent)
-	void GameStateBegin(AMultiplayGameState* MultiplayGameState);
+	void GameStateBegin_Implementation(AMultiplayGameState* MultiplayGameState) override;
 
-	void OnLocalPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState);
-	UFUNCTION(BlueprintNativeEvent)
-	void LocalPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState);
+	void LocalPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
 
-	void OnOtherPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState);
-	UFUNCTION(BlueprintNativeEvent)
-	void OtherPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState);
+	void LocalPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void PlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState);
+	void OtherPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
 
-	void OnPlayerStateDestroyed(AMultiplayPlayerState* Destroyed);
+	void OtherPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerRPCOnPlayerStatesUpdate(const TArray<AMultiplayPlayerState*>& States);
+
+	bool HasAllSyncedPlayerStates();
 };

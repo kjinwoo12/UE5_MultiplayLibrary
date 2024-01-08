@@ -4,7 +4,8 @@
 #include "MultiplayGameMode.h"
 #include "MultiplayGameState.h"
 #include "MultiplayPlayerState.h"
-#include "MultiplayEventListener.h"
+#include "MultiplayClientEventListener.h"
+#include "MultiplayServerEventListener.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -16,66 +17,73 @@ void AMultiplayPlayerController::BeginPlay()
 	SyncedGameState = GetWorld()->GetGameState<AMultiplayGameState>();
 }
 	
-void AMultiplayPlayerController::OnGameStateBegin(AMultiplayGameState* MultiplayGameState)
-{
-    SyncedGameState = MultiplayGameState;
-	GameStateBegin(SyncedGameState);
-
-    TArray<AActor*> foundActors;
-    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayEventListener::StaticClass(), foundActors);
-    for(AActor* actor : foundActors)
-    {
-        IMultiplayEventListener::Execute_GameStateBegin(actor, MultiplayGameState);
-    }
-}
-
 void AMultiplayPlayerController::GameStateBegin_Implementation(AMultiplayGameState* MultiplayGameState)
 {
-}
-
-void AMultiplayPlayerController::OnLocalPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState)
-{
-    SyncedPlayerStates.Add(MultiplayPlayerState);
-	LocalPlayerStateBegin(MultiplayPlayerState);
-
-    TArray<AActor*> foundActors;
-    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayEventListener::StaticClass(), foundActors);
-    for (AActor* actor : foundActors)
-    {
-        IMultiplayEventListener::Execute_LocalPlayerStateBegin(actor, MultiplayPlayerState);
-    }
-
-    PlayerStateBegin(MultiplayPlayerState);
+    SyncedGameState = MultiplayGameState;
 }
 
 void AMultiplayPlayerController::LocalPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
+    SyncedPlayerStates.Add(MultiplayPlayerState);
+    ServerRPCOnPlayerStatesUpdate(SyncedPlayerStates);
 }
 
-void AMultiplayPlayerController::OnOtherPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState)
+void AMultiplayPlayerController::LocalPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
-    SyncedPlayerStates.Add(MultiplayPlayerState);
-	OtherPlayerStateBegin(MultiplayPlayerState);
-
-    TArray<AActor*> foundActors;
-    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayEventListener::StaticClass(), foundActors);
-    for (AActor* actor : foundActors)
-    {
-        IMultiplayEventListener::Execute_OtherPlayerStateBegin(actor, MultiplayPlayerState);
-    }
-
-    PlayerStateBegin(MultiplayPlayerState);
+    SyncedPlayerStates.Remove(MultiplayPlayerState);
+    ServerRPCOnPlayerStatesUpdate(SyncedPlayerStates);
 }
 
 void AMultiplayPlayerController::OtherPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
+    SyncedPlayerStates.Add(MultiplayPlayerState);
+    ServerRPCOnPlayerStatesUpdate(SyncedPlayerStates);
 }
 
-void AMultiplayPlayerController::PlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
+void AMultiplayPlayerController::OtherPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
+    SyncedPlayerStates.Remove(MultiplayPlayerState);
+    ServerRPCOnPlayerStatesUpdate(SyncedPlayerStates);
 }
 
-void AMultiplayPlayerController::OnPlayerStateDestroyed(AMultiplayPlayerState* Destroyed)
+bool AMultiplayPlayerController::ServerRPCOnPlayerStatesUpdate_Validate(const TArray<AMultiplayPlayerState*>& States)
 {
-    SyncedPlayerStates.Remove(Destroyed);
+    return true;
+}
+
+void AMultiplayPlayerController::ServerRPCOnPlayerStatesUpdate_Implementation(const TArray<AMultiplayPlayerState*>& States)
+{
+    SyncedPlayerStates = States;
+    TArray<AActor*> foundActors;
+    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayServerEventListener::StaticClass(), foundActors);
+    for(AActor* actor : foundActors)
+    {
+        IMultiplayServerEventListener::Execute_PlayerStateUpdate(actor, this);
+    }
+}
+
+bool AMultiplayPlayerController::HasAllSyncedPlayerStates()
+{
+    if(SyncedPlayerStates.Num() != SyncedGameState->PlayerArray.Num())
+    {
+        return false;
+    }
+
+    for(AMultiplayPlayerState* syncedPlayerState : SyncedPlayerStates)
+    {
+        bool hasSameInstance = false;
+        for(APlayerState* playerStateOnServer : SyncedGameState->PlayerArray)
+        {
+            if(syncedPlayerState == playerStateOnServer)
+            {
+                hasSameInstance = true;
+            }
+        }
+        if(hasSameInstance)
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

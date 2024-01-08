@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "MultiplayEventListener.generated.h"
+#include "MultiplayClientEventListener.generated.h"
 
 class AMultiplayGameState;
 class AMultiplayPlayerState;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UMultiplayEventListener : public UInterface
+class UMultiplayClientEventListener : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -19,7 +19,7 @@ class UMultiplayEventListener : public UInterface
 /**
  * 
  */
-class MULTIPLAYLIBRARY_API IMultiplayEventListener
+class MULTIPLAYLIBRARY_API IMultiplayClientEventListener
 {
 	GENERATED_BODY()
 
@@ -32,5 +32,11 @@ public:
 	void LocalPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void LocalPlayerStateDestroyed(AMultiplayPlayerState* MultiplayPlayerState);
+
+	UFUNCTION(BlueprintNativeEvent)
 	void OtherPlayerStateBegin(AMultiplayPlayerState* MultiplayPlayerState);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OtherPlayerStateDestroyed(AMultiplayPlayerState* MultiplayPlayerState);
 };

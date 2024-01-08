@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "MultiplayServerEventListener.h"
 #include "MultiplayGameMode.generated.h"
 
 class AMultiplayPlayerController;
@@ -12,7 +13,7 @@ class AMultiplayPlayerController;
  *
  */
 UCLASS()
-class MULTIPLAYLIBRARY_API AMultiplayGameMode : public AGameModeBase
+class MULTIPLAYLIBRARY_API AMultiplayGameMode : public AGameModeBase, public IMultiplayServerEventListener
 {
 	GENERATED_BODY()
 
@@ -28,14 +29,15 @@ public:
 				  const FUniqueNetIdRepl& UniqueId,
 				  FString& ErrorMessage) override;
 
-	void OnPlayerReady(AMultiplayPlayerController* MultiplayPlayerController);
-	UFUNCTION(BlueprintNativeEvent)
-	void PlayerReady(AMultiplayPlayerController* MultiplayPlayerController);
-
 	void Logout(AController* Exiting) override;
+
+	void PlayerStateUpdate_Implementation(AMultiplayPlayerController* PlayerController) override;
 
 	// CurrentPlayer Num >= MaxPlayer
 	// It follows variable "int MaxPlayer"
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool IsGameFullOfPlayers();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsAllPlayersSynced();
 };

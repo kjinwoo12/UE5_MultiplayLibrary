@@ -3,6 +3,9 @@
 
 #include "MultiplayPlayerState.h"
 #include "MultiplayPlayerController.h"
+#include "MultiplayClientEventListener.h"
+
+#include "Kismet/GameplayStatics.h"
 
 void AMultiplayPlayerState::BeginPlay()
 {
@@ -13,25 +16,40 @@ void AMultiplayPlayerState::BeginPlay()
     }
 
     AMultiplayPlayerController* localPlayerController = Cast<AMultiplayPlayerController>(GetOwner());
+    TArray<AActor*> foundActors;
+    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayClientEventListener::StaticClass(), foundActors);
     if (IsValid(localPlayerController))
-    { // if the localPlayerController is the owner of this state, 
-        localPlayerController->OnLocalPlayerStateBegin(this);
+    {
+        for(AActor* actor : foundActors)
+        {
+            IMultiplayClientEventListener::Execute_LocalPlayerStateBegin(actor, this);
+        }
     }
     else
     {
-        localPlayerController = GetWorld()->GetFirstPlayerController<AMultiplayPlayerController>();
-        if (!IsValid(localPlayerController))
-            return;
-
-        localPlayerController->OnOtherPlayerStateBegin(this);
+        for(AActor* actor : foundActors)
+        {
+            IMultiplayClientEventListener::Execute_OtherPlayerStateBegin(actor, this);
+        }
     }
 }
 
 void AMultiplayPlayerState::Destroyed()
 {
-    AMultiplayPlayerController* localPlayerController = GetWorld()->GetFirstPlayerController<AMultiplayPlayerController>();
-    if(!IsValid(localPlayerController))
-        return;
-
-    localPlayerController->OnPlayerStateDestroyed(this);
+    AMultiplayPlayerController* localPlayerController = Cast<AMultiplayPlayerController>(GetOwner());
+    TArray<AActor*> foundActors;
+    if(IsValid(localPlayerController))
+    {
+        for(AActor* actor : foundActors)
+        {
+            IMultiplayClientEventListener::Execute_LocalPlayerStateDestroyed(actor, this);
+        }
+    }
+    else
+    {
+        for(AActor* actor : foundActors)
+        {
+            IMultiplayClientEventListener::Execute_OtherPlayerStateDestroyed(actor, this);
+        }
+    }
 }

@@ -15,25 +15,15 @@ AMultiplayGameMode::AMultiplayGameMode()
 }
 
 void AMultiplayGameMode::PreLogin(const FString& Options,
-                                           const FString& Address,
-                                           const FUniqueNetIdRepl& UniqueId,
-                                           FString& ErrorMessage)
+                                  const FString& Address,
+                                  const FUniqueNetIdRepl& UniqueId,
+                                  FString& ErrorMessage)
 {
     if (IsGameFullOfPlayers())
     {
         ErrorMessage = "The Game is full of players.";
         return;
     }
-}
-
-void AMultiplayGameMode::OnPlayerReady(AMultiplayPlayerController* MultiplayPlayerController)
-{
-	ReadyPlayers.Add(MultiplayPlayerController);
-	PlayerReady(MultiplayPlayerController);
-}
-
-void AMultiplayGameMode::PlayerReady_Implementation(AMultiplayPlayerController* MultiplayPlayerController)
-{
 }
 
 void AMultiplayGameMode::Logout(AController * Exiting)
@@ -47,6 +37,18 @@ void AMultiplayGameMode::Logout(AController * Exiting)
     Super::Logout(Exiting);
 }
 
+void AMultiplayGameMode::PlayerStateUpdate_Implementation(AMultiplayPlayerController* PlayerController)
+{
+    if(PlayerController->HasAllSyncedPlayerStates())
+    {
+        ReadyPlayers.Add(PlayerController);
+    }
+    else
+    {
+        ReadyPlayers.Remove(PlayerController);
+    }
+}
+
 bool AMultiplayGameMode::IsGameFullOfPlayers()
 {
     AMultiplayGameState* multiplayGameState = GetGameState<AMultiplayGameState>();
@@ -54,4 +56,20 @@ bool AMultiplayGameMode::IsGameFullOfPlayers()
         return GetNumPlayers() >= multiplayGameState->MaxPlayer;
     else
         return false;
+}
+
+
+bool AMultiplayGameMode::IsAllPlayersSynced()
+{
+    AMultiplayGameState* multiplayGameState = GetGameState<AMultiplayGameState>();
+    if(IsValid(multiplayGameState))
+        return false;
+
+    for(APlayerState* readyPlayerState : multiplayGameState->PlayerArray)
+    {
+        AMultiplayPlayerController* readyPlayer = Cast<AMultiplayPlayerController>(readyPlayerState->GetOwner());
+        if(!IsValid(readyPlayer)||!readyPlayer->HasAllSyncedPlayerStates())
+            return false;
+    }
+    return true;
 }

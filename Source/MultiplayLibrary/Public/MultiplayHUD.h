@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "MultiplayEventListener.h"
+#include "MultiplayClientEventListener.h"
 #include "MultiplayHUD.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MULTIPLAYLIBRARY_API AMultiplayHUD : public AHUD, public IMultiplayEventListener
+class MULTIPLAYLIBRARY_API AMultiplayHUD : public AHUD, public IMultiplayClientEventListener
 {
 	GENERATED_BODY()
 
@@ -20,5 +20,9 @@ public:
 
 	void LocalPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
 
+	void LocalPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
+
 	void OtherPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
+
+	void OtherPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState) override;
 };
