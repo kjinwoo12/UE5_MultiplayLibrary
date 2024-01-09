@@ -14,10 +14,10 @@ class MULTIPLAYLIBRARY_API AMultiplayGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 
+	void BeginPlay() override;
+
 public:
 	// Default 2.
 	UPROPERTY(BlueprintReadWrite)
 	int MaxPlayer=2;
-
-	void BeginPlay() override;
 };

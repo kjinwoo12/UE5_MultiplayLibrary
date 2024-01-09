@@ -4,8 +4,8 @@
 #include "MultiplayGameMode.h"
 #include "MultiplayGameState.h"
 #include "MultiplayPlayerState.h"
-#include "MultiplayClientEventListener.h"
-#include "MultiplayServerEventListener.h"
+#include "MultiplayClientEvent.h"
+#include "MultiplayServerEvent.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -55,10 +55,10 @@ void AMultiplayPlayerController::ServerRPCOnPlayerStatesUpdate_Implementation(co
 {
     SyncedPlayerStates = States;
     TArray<AActor*> foundActors;
-    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayServerEventListener::StaticClass(), foundActors);
+    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayServerEvent::StaticClass(), foundActors);
     for(AActor* actor : foundActors)
     {
-        IMultiplayServerEventListener::Execute_PlayerStateUpdate(actor, this);
+        IMultiplayServerEvent::Execute_PlayerStateUpdate(actor, this);
     }
 }
 

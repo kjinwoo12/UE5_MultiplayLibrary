@@ -6,14 +6,6 @@
 #include "MultiplayPlayerController.h"
 #include "MultiplayPlayerState.h"
 
-
-AMultiplayGameMode::AMultiplayGameMode()
-{
-    GameStateClass = AMultiplayGameState::StaticClass();
-    PlayerControllerClass = AMultiplayPlayerController::StaticClass();
-    PlayerStateClass = AMultiplayPlayerState::StaticClass();
-}
-
 void AMultiplayGameMode::PreLogin(const FString& Options,
                                   const FString& Address,
                                   const FUniqueNetIdRepl& UniqueId,

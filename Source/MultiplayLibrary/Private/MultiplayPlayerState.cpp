@@ -3,7 +3,7 @@
 
 #include "MultiplayPlayerState.h"
 #include "MultiplayPlayerController.h"
-#include "MultiplayClientEventListener.h"
+#include "MultiplayClientEvent.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -17,19 +17,19 @@ void AMultiplayPlayerState::BeginPlay()
 
     AMultiplayPlayerController* localPlayerController = Cast<AMultiplayPlayerController>(GetOwner());
     TArray<AActor*> foundActors;
-    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayClientEventListener::StaticClass(), foundActors);
+    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayClientEvent::StaticClass(), foundActors);
     if (IsValid(localPlayerController))
     {
         for(AActor* actor : foundActors)
         {
-            IMultiplayClientEventListener::Execute_LocalPlayerStateBegin(actor, this);
+            IMultiplayClientEvent::Execute_LocalPlayerStateBegin(actor, this);
         }
     }
     else
     {
         for(AActor* actor : foundActors)
         {
-            IMultiplayClientEventListener::Execute_OtherPlayerStateBegin(actor, this);
+            IMultiplayClientEvent::Execute_OtherPlayerStateBegin(actor, this);
         }
     }
 }
@@ -42,14 +42,14 @@ void AMultiplayPlayerState::Destroyed()
     {
         for(AActor* actor : foundActors)
         {
-            IMultiplayClientEventListener::Execute_LocalPlayerStateDestroyed(actor, this);
+            IMultiplayClientEvent::Execute_LocalPlayerStateDestroyed(actor, this);
         }
     }
     else
     {
         for(AActor* actor : foundActors)
         {
-            IMultiplayClientEventListener::Execute_OtherPlayerStateDestroyed(actor, this);
+            IMultiplayClientEvent::Execute_OtherPlayerStateDestroyed(actor, this);
         }
     }
 }

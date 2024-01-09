@@ -3,12 +3,15 @@
 
 #include "MultiplayGameState.h"
 #include "MultiplayPlayerController.h"
-#include "MultiplayClientEventListener.h"
+#include "MultiplayClientEvent.h"
 
 #include "Kismet/GameplayStatics.h"
 
 void AMultiplayGameState::BeginPlay()
 {
+    Super::BeginPlay();
+
+    UE_LOG(LogTemp, Log, TEXT("AMultiplayGameState::BeginPlay"));
     if(GetNetMode() != ENetMode::NM_Client)
     {
         //Server
@@ -16,9 +19,9 @@ void AMultiplayGameState::BeginPlay()
     }
 
     TArray<AActor*> foundActors;
-    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayClientEventListener::StaticClass(), foundActors);
+    UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayClientEvent::StaticClass(), foundActors);
     for(AActor* actor : foundActors)
     {
-        IMultiplayClientEventListener::Execute_GameStateBegin(actor, this);
+        IMultiplayClientEvent::Execute_GameStateBegin(actor, this);
     }
 }

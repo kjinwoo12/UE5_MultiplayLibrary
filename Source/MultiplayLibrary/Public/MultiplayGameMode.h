@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "MultiplayServerEventListener.h"
+#include "MultiplayServerEvent.h"
 #include "MultiplayGameMode.generated.h"
 
 class AMultiplayPlayerController;
@@ -13,7 +13,7 @@ class AMultiplayPlayerController;
  *
  */
 UCLASS()
-class MULTIPLAYLIBRARY_API AMultiplayGameMode : public AGameModeBase, public IMultiplayServerEventListener
+class MULTIPLAYLIBRARY_API AMultiplayGameMode : public AGameModeBase, public IMultiplayServerEvent
 {
 	GENERATED_BODY()
 
@@ -22,8 +22,6 @@ protected:
 	TArray<AMultiplayPlayerController*> ReadyPlayers;
 
 public:
-	AMultiplayGameMode();
-
 	void PreLogin(const FString& Options,
 				  const FString& Address,
 				  const FUniqueNetIdRepl& UniqueId,

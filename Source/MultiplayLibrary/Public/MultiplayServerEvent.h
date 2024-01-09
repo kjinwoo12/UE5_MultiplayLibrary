@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "MultiplayServerEventListener.generated.h"
+#include "MultiplayServerEvent.generated.h"
 
 class AMultiplayPlayerState;
 class AMultiplayPlayerController;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UMultiplayServerEventListener : public UInterface
+class UMultiplayServerEvent : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -19,7 +19,7 @@ class UMultiplayServerEventListener : public UInterface
 /**
  * 
  */
-class MULTIPLAYLIBRARY_API IMultiplayServerEventListener
+class MULTIPLAYLIBRARY_API IMultiplayServerEvent
 {
 	GENERATED_BODY()
 

@@ -7,20 +7,20 @@
 void AMultiplayHUD::GameStateBegin_Implementation(AMultiplayGameState* MultiplayGameState)
 {
 	TArray<UUserWidget*> foundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEventListener::StaticClass(), true);
+	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEvent::StaticClass(), true);
 	for(UUserWidget* widget : foundWidgets)
 	{
-		IMultiplayClientEventListener::Execute_GameStateBegin(widget, MultiplayGameState);
+		IMultiplayClientEvent::Execute_GameStateBegin(widget, MultiplayGameState);
 	}
 }
 
 void AMultiplayHUD::LocalPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
 	TArray<UUserWidget*> foundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEventListener::StaticClass(), true);
+	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEvent::StaticClass(), true);
 	for (UUserWidget* widget : foundWidgets)
 	{
-		IMultiplayClientEventListener::Execute_LocalPlayerStateBegin(widget, MultiplayPlayerState);
+		IMultiplayClientEvent::Execute_LocalPlayerStateBegin(widget, MultiplayPlayerState);
 	}
 }
 
@@ -28,29 +28,29 @@ void AMultiplayHUD::LocalPlayerStateBegin_Implementation(AMultiplayPlayerState* 
 void AMultiplayHUD::LocalPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
 	TArray<UUserWidget*> foundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEventListener::StaticClass(), true);
+	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEvent::StaticClass(), true);
 	for(UUserWidget* widget : foundWidgets)
 	{
-		IMultiplayClientEventListener::Execute_LocalPlayerStateDestroyed(widget, MultiplayPlayerState);
+		IMultiplayClientEvent::Execute_LocalPlayerStateDestroyed(widget, MultiplayPlayerState);
 	}
 }
 
 void AMultiplayHUD::OtherPlayerStateBegin_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
 	TArray<UUserWidget*> foundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEventListener::StaticClass(), true);
+	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEvent::StaticClass(), true);
 	for (UUserWidget* widget : foundWidgets)
 	{
-		IMultiplayClientEventListener::Execute_OtherPlayerStateBegin(widget, MultiplayPlayerState);
+		IMultiplayClientEvent::Execute_OtherPlayerStateBegin(widget, MultiplayPlayerState);
 	}
 }
 
 void AMultiplayHUD::OtherPlayerStateDestroyed_Implementation(AMultiplayPlayerState* MultiplayPlayerState)
 {
 	TArray<UUserWidget*> foundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEventListener::StaticClass(), true);
+	UWidgetBlueprintLibrary::GetAllWidgetsWithInterface(GetWorld(), foundWidgets, UMultiplayClientEvent::StaticClass(), true);
 	for(UUserWidget* widget : foundWidgets)
 	{
-		IMultiplayClientEventListener::Execute_OtherPlayerStateDestroyed(widget, MultiplayPlayerState);
+		IMultiplayClientEvent::Execute_OtherPlayerStateDestroyed(widget, MultiplayPlayerState);
 	}
 }

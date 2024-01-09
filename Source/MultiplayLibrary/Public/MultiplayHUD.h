@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "MultiplayClientEventListener.h"
+#include "MultiplayClientEvent.h"
 #include "MultiplayHUD.generated.h"
 
 /**
  *
  */
 UCLASS()
-class MULTIPLAYLIBRARY_API AMultiplayHUD : public AHUD, public IMultiplayClientEventListener
+class MULTIPLAYLIBRARY_API AMultiplayHUD : public AHUD, public IMultiplayClientEvent
 {
 	GENERATED_BODY()
 

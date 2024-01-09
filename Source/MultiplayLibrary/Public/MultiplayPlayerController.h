@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "MultiplayClientEventListener.h"
+#include "MultiplayClientEvent.h"
 #include "MultiplayPlayerController.generated.h"
 
 /**
@@ -15,7 +15,7 @@ class AMultiplayPlayerState;
 class AMultiplayGameMode;
 
 UCLASS()
-class MULTIPLAYLIBRARY_API AMultiplayPlayerController : public APlayerController, public IMultiplayClientEventListener
+class MULTIPLAYLIBRARY_API AMultiplayPlayerController : public APlayerController, public IMultiplayClientEvent
 {
 	GENERATED_BODY()
 
