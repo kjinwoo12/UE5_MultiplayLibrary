@@ -11,6 +11,7 @@ void AMultiplayGameMode::PreLogin(const FString& Options,
                                   const FUniqueNetIdRepl& UniqueId,
                                   FString& ErrorMessage)
 {
+    Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
     if (IsGameFullOfPlayers())
     {
         ErrorMessage = "The Game is full of players.";
@@ -20,13 +21,12 @@ void AMultiplayGameMode::PreLogin(const FString& Options,
 
 void AMultiplayGameMode::Logout(AController * Exiting)
 {
+    Super::Logout(Exiting);
     AMultiplayPlayerController* multiplayPlayerController = Cast<AMultiplayPlayerController>(Exiting);
     if(IsValid(multiplayPlayerController))
     {
         ReadyPlayers.Remove(multiplayPlayerController);
     }
-
-    Super::Logout(Exiting);
 }
 
 void AMultiplayGameMode::PlayerStateUpdate_Implementation(AMultiplayPlayerController* PlayerController)
@@ -45,23 +45,40 @@ bool AMultiplayGameMode::IsGameFullOfPlayers()
 {
     AMultiplayGameState* multiplayGameState = GetGameState<AMultiplayGameState>();
     if(IsValid(multiplayGameState))
+    {
+        UE_LOG(LogTemp, Log, TEXT("AMultiplayGameMode::IsGameFullOfPlayers - GetNumPlayers %d, MaxPlayer %d"), GetNumPlayers(), multiplayGameState->MaxPlayer);
         return GetNumPlayers() >= multiplayGameState->MaxPlayer;
+    }
     else
+    {
+        UE_LOG(LogTemp, Log, TEXT("AMultiplayGameMode::IsGameFullOfPlayers - multiplayGameState invalid"));
         return false;
+    }
 }
 
 
 bool AMultiplayGameMode::IsAllPlayersSynced()
 {
     AMultiplayGameState* multiplayGameState = GetGameState<AMultiplayGameState>();
-    if(IsValid(multiplayGameState))
+    if(!IsValid(multiplayGameState))
+    {
+        UE_LOG(LogTemp, Log, TEXT("AMultiplayGameMode::IsAllPlayersSynced - multiplayGameState invalid"));
         return false;
+    }
 
     for(APlayerState* readyPlayerState : multiplayGameState->PlayerArray)
     {
         AMultiplayPlayerController* readyPlayer = Cast<AMultiplayPlayerController>(readyPlayerState->GetOwner());
-        if(!IsValid(readyPlayer)||!readyPlayer->HasAllSyncedPlayerStates())
+        if(!IsValid(readyPlayer))
+        {
+            UE_LOG(LogTemp, Log, TEXT("AMultiplayGameMode::IsAllPlayersSynced - readyPlayer invalid"));
             return false;
+        }
+        if(!readyPlayer->HasAllSyncedPlayerStates())
+        {
+            UE_LOG(LogTemp, Log, TEXT("AMultiplayGameMode::IsAllPlayersSynced - readyPlayer is not synced"));
+            return false;
+        }
     }
     return true;
 }

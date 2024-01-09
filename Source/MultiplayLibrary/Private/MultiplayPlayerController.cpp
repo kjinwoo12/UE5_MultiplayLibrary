@@ -66,6 +66,12 @@ bool AMultiplayPlayerController::HasAllSyncedPlayerStates()
 {
     if(SyncedPlayerStates.Num() != SyncedGameState->PlayerArray.Num())
     {
+        UE_LOG(LogTemp, 
+               Log, 
+               TEXT("AMultiplayPlayerController::HasAllSyncedPlayerStates - SyncedPlayerStates.Num %d, SyncedgameState->PlayerrArray.Num %d"), 
+               SyncedPlayerStates.Num(), 
+               SyncedGameState->PlayerArray.Num()
+        );
         return false;
     }
 
@@ -77,13 +83,14 @@ bool AMultiplayPlayerController::HasAllSyncedPlayerStates()
             if(syncedPlayerState == playerStateOnServer)
             {
                 hasSameInstance = true;
+                break;
             }
         }
-        if(hasSameInstance)
+        if(!hasSameInstance)
         {
+            UE_LOG(LogTemp, Log, TEXT("AMultiplayPlayerController::HasAllSyncedPlayerStates - PlayerState are not synced"));
             return false;
         }
     }
-
     return true;
 }
