@@ -9,6 +9,8 @@
 
 void AMultiplayPlayerState::BeginPlay()
 {
+    Super::BeginPlay();
+
     if(GetNetMode() != ENetMode::NM_Client)
     {
         //Server
