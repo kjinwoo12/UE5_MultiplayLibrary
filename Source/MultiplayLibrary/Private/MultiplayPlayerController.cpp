@@ -11,6 +11,7 @@
 
 void AMultiplayPlayerController::BeginPlay()
 {
+    Super::BeginPlay();
     if (GetNetMode() == ENetMode::NM_Client)
         return;
 
