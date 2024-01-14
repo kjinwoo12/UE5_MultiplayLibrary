@@ -10,13 +10,13 @@
 void AMultiplayPlayerState::BeginPlay()
 {
     Super::BeginPlay();
-
     if(GetNetMode() != ENetMode::NM_Client)
     {
         //Server
         return;
     }
 
+    UE_LOG(LogTemp, Log, TEXT("AMultiplayPlayerState::BeginPlay()"));
     AMultiplayPlayerController* localPlayerController = Cast<AMultiplayPlayerController>(GetOwner());
     TArray<AActor*> foundActors;
     UGameplayStatics::GetAllActorsWithInterface(GetWorld(), UMultiplayClientEvent::StaticClass(), foundActors);
@@ -38,6 +38,13 @@ void AMultiplayPlayerState::BeginPlay()
 
 void AMultiplayPlayerState::Destroyed()
 {
+    Super::Destroyed();
+    if(GetNetMode() != ENetMode::NM_Client)
+    {
+        //Server
+        return;
+    }
+    UE_LOG(LogTemp, Log, TEXT("AMultiplayPlayerState::Destroyed()"));
     AMultiplayPlayerController* localPlayerController = Cast<AMultiplayPlayerController>(GetOwner());
     TArray<AActor*> foundActors;
     if(IsValid(localPlayerController))

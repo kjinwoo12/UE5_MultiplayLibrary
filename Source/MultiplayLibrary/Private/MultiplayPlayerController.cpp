@@ -69,7 +69,7 @@ bool AMultiplayPlayerController::HasAllSyncedPlayerStates()
     {
         UE_LOG(LogTemp, 
                Log, 
-               TEXT("AMultiplayPlayerController::HasAllSyncedPlayerStates - SyncedPlayerStates.Num %d, SyncedgameState->PlayerrArray.Num %d"), 
+               TEXT("AMultiplayPlayerController::HasAllSyncedPlayerStates - SyncedPlayerStates.Num %d, SyncedgameState->PlayerArray.Num %d"), 
                SyncedPlayerStates.Num(), 
                SyncedGameState->PlayerArray.Num()
         );
