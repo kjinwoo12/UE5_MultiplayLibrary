@@ -14,7 +14,7 @@ Have you ever got any situations about invalid `GameState` or `PlayerState` when
 ## example
 Simple Code
 ```C++
-class LEAGUEOFWATCH_API AMyGameMode : public AMultiplayGameMode
+class MYGAME_API AMyGameMode : public AMultiplayGameMode
 {
 	GENERATED_BODY()
 	
