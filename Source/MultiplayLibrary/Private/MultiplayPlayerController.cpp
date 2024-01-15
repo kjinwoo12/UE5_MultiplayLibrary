@@ -65,6 +65,12 @@ void AMultiplayPlayerController::ServerRPCOnPlayerStatesUpdate_Implementation(co
 
 bool AMultiplayPlayerController::HasAllSyncedPlayerStates()
 {
+    if(!IsValid(SyncedGameState))
+    {
+        UE_LOG(LogTemp, Log, TEXT("AMultiplayPlayerController::HasAllSyncedPlayerStates - Invalid SyncedGameState"));
+        return false;
+    }
+
     if(SyncedPlayerStates.Num() != SyncedGameState->PlayerArray.Num())
     {
         UE_LOG(LogTemp, 
